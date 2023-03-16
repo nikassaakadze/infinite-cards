@@ -1,54 +1,71 @@
-import { useEffect, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import axios from 'axios';
 import Friends from '../components/Friends';
 import queryString from 'query-string';
 import { Link, useLocation } from 'react-router-dom';
+import { View } from '../components/feed.styled';
+import { Avatar, Description, Headline, Info, List, ListItem, UserHeader } from './view.styled';
+
 export default function User(){
-  const [user, setUser] = useState([])
-  const [loading, setLoading] = useState(false)
-  const location = useLocation()
-  const {id} = queryString.parse(location.search)
-  async function getUsers() {
-    setLoading(true)
-    await axios
-      .get(`http://sweeftdigital-intern.eu-central-1.elasticbeanstalk.com/user/${id}`)
-      .then((res) => {
-        setUser(res.data)
-        setLoading(false)
-      });
-  }
+
+const [user, setUser] = useState([])
+
+const location = useLocation()
+const {id} = queryString.parse(location.search)
+
+async function getUsers() {
+  await axios.get(`http://sweeftdigital-intern.eu-central-1.elasticbeanstalk.com/user/${id}`)
+    .then((res) => {
+      setUser(res.data)
+    });
+}
 
   useEffect(() => {
     getUsers();
   }, [id]);
   return(
-    <div className="wrapper">
-      <Link to="/">Home</Link>
-      <div className="inner">
-        <div className="user-header">
-          <img src={user?.imageUrl} className="user-img" />
-          <div className="user-info">
-            <h1>{user?.name} {user?.lastName}</h1>
-          </div>
-        </div>
-        <div className="user-description">
-          <ul>
-            <li><strong>Email</strong>: {user?.email} </li>
-            <li><strong>Ip Address</strong>: {user?.ip}</li>
-            <li><strong>Job area</strong>: {user?.jobArea}</li>
-            <li><strong>Job Type</strong>: {user?.jobType}</li>
-          </ul>
-          <ul>
-            <li><strong>City</strong>: {user?.address?.city} </li>
-            <li><strong>Country</strong>: {user?.address?.country}</li>
-            <li><strong>State</strong>: {user?.address?.state}</li>
-            <li><strong>Street Address</strong>: {user?.address?.streetAddress}</li>
-            <li><strong>Zip code</strong>: {user?.address?.zipCode}</li>
-          </ul>
-        </div>
-        <h2>Frineds:</h2>
+    <View>
+      <Fragment>
+        <UserHeader>
+          <Avatar src={user?.imageUrl + '/' + id} className="user-img" alt={user?.name} />
+          <Info>{user?.name} {user?.lastName}</Info>
+        </UserHeader>
+        <Description>
+          <List>
+            <ListItem>
+              <strong>Email</strong>: {user?.email} 
+            </ListItem>
+            <ListItem>
+              <strong>Ip Address</strong>: {user?.ip}
+            </ListItem>
+            <ListItem>
+              <strong>Job area</strong>: {user?.jobArea}
+            </ListItem>
+            <ListItem>
+              <strong>Job Type</strong>: {user?.jobType}
+            </ListItem>
+          </List>
+          <List>
+            <ListItem>
+              <strong>City</strong>: {user?.address?.city} 
+            </ListItem>
+            <ListItem>
+              <strong>Country</strong>: {user?.address?.country}
+            </ListItem>
+            <ListItem>
+              <strong>State</strong>: {user?.address?.state}
+            </ListItem>
+            <ListItem>
+              <strong>Street Address</strong>: {user?.address?.streetAddress}
+            </ListItem>
+            <ListItem>
+              <strong>Zip code</strong>: {user?.address?.zipCode}
+            </ListItem>
+          </List>
+        </Description>
+        <Headline>Friends:</Headline>
         <Friends />
-      </div>
-    </div>
+      </Fragment>
+    </View>
   )
 }

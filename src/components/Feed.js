@@ -1,6 +1,8 @@
 import axios from 'axios';
-import React, { useEffect, useState, useRef } from 'react';
-import Card from './Card';
+import React, { useEffect, useState, useRef, Fragment } from 'react';
+import Card from './Card/Card';
+import { Loader, LoaderIndic, Wrapper } from './feed.styled';
+import LoaderGIF from '../assets/loader.gif'
 
 export default function Feed() {
   const [users, setUsers] = useState([]);
@@ -33,6 +35,7 @@ export default function Feed() {
     getUsers();
   }, [pageNumber]);
 
+
   useEffect(() => {
     const currentObserver = observer.current;
     if (currentObserver) {
@@ -57,16 +60,18 @@ export default function Feed() {
   }, [users]);
 
   return (
-    <div className="feed-wrap">
-      {users.map(({ name, lastName, imageUrl, title, id }) => (
-        <Card id={id} key={id} name={name} lastname={lastName} imageUrl={imageUrl} title={title} />
-      ))}
+    <Fragment>
+      <Wrapper>
+        {users.map(({ name, lastName, imageUrl, title, id }, index) => (
+          <Card id={id} key={index} name={name} lastname={lastName} imageUrl={imageUrl + '/' + id} title={title} />
+        ))}
+      </Wrapper>
       {loading && (
-        <div className="loader">
-          <div className="loader-icon"></div>
-        </div>
+        <Loader>
+          <LoaderIndic src={LoaderGIF} alt="loading..." />
+        </Loader>
       )}
       <div id="observer"></div>
-    </div>
+    </Fragment>
   );
 }

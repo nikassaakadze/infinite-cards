@@ -5,6 +5,7 @@ export const UserCard = styled.div`
   height: 300px;
   border-radius: 10px;
   box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+  background: white
 `
 export const CardBody = styled.div`
   height: 20%;
