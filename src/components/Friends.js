@@ -38,7 +38,7 @@ export default function Friends() {
     getUsers();
     console.log("changed")
 console.log(id)
-  }, [ id]);
+  }, [pageNumber, id]);
 
   
 
