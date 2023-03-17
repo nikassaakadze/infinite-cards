@@ -6,7 +6,7 @@ export default function Card({name, lastname, imageUrl, title, id}) {
   return (
     <Link to={`/user?&id=${id}`}>
       <UserCard>
-        <CardHero src={imageUrl}/>
+        <CardHero src={imageUrl} alt={name}/>
         <CardBody>
           <CardName>{name} {lastname}</CardName>
           <CardTitle>{title}</CardTitle>

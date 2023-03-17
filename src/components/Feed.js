@@ -21,17 +21,16 @@ export default function Feed() {
     )
   );
 
-  async function getUsers() {
-    setLoading(true);
-    await axios
-      .get(`http://sweeftdigital-intern.eu-central-1.elasticbeanstalk.com/user/${pageNumber}/10`)
-      .then((res) => {
-        setUsers((prevUsers) => [...prevUsers, ...res.data.list]);
-        setLoading(false);
-      });
-  }
-
   useEffect(() => {
+    async function getUsers() {
+      setLoading(true);
+      await axios
+        .get(`http://sweeftdigital-intern.eu-central-1.elasticbeanstalk.com/user/${pageNumber}/10`)
+        .then((res) => {
+          setUsers((prevUsers) => [...prevUsers, ...res.data.list]);
+          setLoading(false);
+        });
+    }
     getUsers();
   }, [pageNumber]);
 

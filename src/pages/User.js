@@ -2,70 +2,83 @@ import { Fragment, useEffect, useState } from 'react';
 import axios from 'axios';
 import Friends from '../components/Friends';
 import queryString from 'query-string';
-import { Link, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { View } from '../components/feed.styled';
 import { Avatar, Description, Headline, Info, List, ListItem, UserHeader } from './view.styled';
 
 export default function User(){
 
-const [user, setUser] = useState([])
+const [user, setUser] = useState({})
+const [error, setError] = useState(false)
 
 const location = useLocation()
 const {id} = queryString.parse(location.search)
 
-async function getUsers() {
-  await axios.get(`http://sweeftdigital-intern.eu-central-1.elasticbeanstalk.com/user/${id}`)
-    .then((res) => {
-      setUser(res.data)
-    });
-}
-
   useEffect(() => {
+    async function getUsers() {
+      try {
+        const response = await axios.get(`http://sweeftdigital-intern.eu-central-1.elasticbeanstalk.com/user/${id}`);
+        setUser(response.data);
+      } catch (error) {
+        setError(true)
+      }
+    }
     getUsers();
   }, [id]);
+
+  const { name, lastName, email, ip, jobArea, jobType, address, imageUrl } = user;
+
   return(
     <View>
-      <Fragment>
+      {
+        error ? <span>An error occurred</span> :
+        <Fragment>
         <UserHeader>
-          <Avatar src={user?.imageUrl + '/' + id} className="user-img" alt={user?.name} />
-          <Info>{user?.name} {user?.lastName}</Info>
+          {/* Taking random pictures by adding an id to the link */}
+          <Avatar src={imageUrl + '/' + id} className="user-img" alt={name} />
+          <Info>{name} {lastName}</Info>
         </UserHeader>
         <Description>
+
           <List>
             <ListItem>
-              <strong>Email</strong>: {user?.email} 
+              <strong>Email</strong>: {email} 
             </ListItem>
             <ListItem>
-              <strong>Ip Address</strong>: {user?.ip}
+              <strong>Ip Address</strong>: {ip}
             </ListItem>
             <ListItem>
-              <strong>Job area</strong>: {user?.jobArea}
+              <strong>Job area</strong>: {jobArea}
             </ListItem>
             <ListItem>
-              <strong>Job Type</strong>: {user?.jobType}
+              <strong>Job Type</strong>: {jobType}
             </ListItem>
           </List>
+
           <List>
             <ListItem>
-              <strong>City</strong>: {user?.address?.city} 
+              <strong>City</strong>: {address?.city} 
             </ListItem>
             <ListItem>
-              <strong>Country</strong>: {user?.address?.country}
+              <strong>Country</strong>: {address?.country}
             </ListItem>
             <ListItem>
-              <strong>State</strong>: {user?.address?.state}
+              <strong>State</strong>: {address?.state}
             </ListItem>
             <ListItem>
-              <strong>Street Address</strong>: {user?.address?.streetAddress}
+              <strong>Street Address</strong>: {address?.streetAddress}
             </ListItem>
             <ListItem>
-              <strong>Zip code</strong>: {user?.address?.zipCode}
+              <strong>Zip code</strong>: {address?.zipCode}
             </ListItem>
           </List>
+
         </Description>
         <Headline>Friends:</Headline>
+        {/* User's friends list */}
         <Friends />
       </Fragment>
+      }
     </View>
   )
 }
